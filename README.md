@@ -1,6 +1,6 @@
 # Agentic Engineering Team
 
-This repo answers Nth AI Challenge 2:
+This repo is about:
 
 > Build a team of agents that takes a spec and ships code - plan, implement, review, test - with one worked example shipping a small feature autonomously.
 
