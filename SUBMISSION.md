@@ -79,6 +79,8 @@ Current known tradeoffs:
 - Refresh-token revocation is not persisted
 - The schema engine is focused, not full JSON Schema
 
+One other honest limitation is that the review findings in this worked example are deterministic rather than produced by a separate review agent running independent analysis. The findings themselves are real and accurate for the shipped feature, and the production next step would be to split review into its own static-analysis or model-backed agent with independent judgment.
+
 Those tradeoffs are documented in the shipped review artifact instead of being glossed over.
 
 ## What I Would Do Next With More Time

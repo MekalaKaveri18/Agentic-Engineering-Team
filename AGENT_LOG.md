@@ -72,6 +72,6 @@ Non-functional requirements
 
 **Goal:** Persist the run into reviewer-friendly artifacts.
 
-- Build manifest written at 2026-06-05T08:31:58.901Z
+- Build manifest written at 2026-06-05T09:18:53.363Z
 - Artifacts directory: artifacts
 - Known tradeoffs accepted: 3
