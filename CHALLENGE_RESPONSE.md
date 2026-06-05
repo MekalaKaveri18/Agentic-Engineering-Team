@@ -1,129 +1,43 @@
-# Challenge 2: Agentic Engineering Team
+# Challenge 2 Response
 
-## What We Built
+Prompt:
 
-A **self-improving agent team** that autonomously ships production code. We give it a spec, it designs, codes, reviews, tests, and iterates until done.
+> Build a team of agents that takes a spec and ships code - plan, implement, review, test - with one worked example shipping a small feature autonomously.
 
-## The Team
+This repo answers that prompt with a scoped engineering team and one backend worked example.
 
-```
-┌─────────────┐
-│  Spec Input │
-└──────┬──────┘
-       │
-    ┌──▼──────────┐
-    │ Architect   │ → Designs the system, module breakdown, interfaces
-    └──┬──────────┘
-       │
-    ┌──▼──────────┐
-    │Implementer  │ → Codes each module (RateLimiter, Validator, JWT)
-    └──┬──────────┘
-       │
-    ┌──▼──────────┐
-    │ Reviewer    │ → Finds bugs, security issues, edge cases
-    └──┬──────────┘
-       │
-    ┌──▼──────────┐
-    │ Tester      │ → Writes tests, validates, identifies gaps
-    └──┬──────────┘
-       │
-    ┌──▼──────────┐
-    │ Feedback    │ → Issues found? Loop back to implementer
-    └──┬──────────┘
-       │
-    ┌──▼──────────┐
-    │ Shipped ✅  │ → Working code, tests, git history
-    └─────────────┘
-```
+## Spec
 
-## The Spec
+Build an Express middleware package with:
 
-Build an Express middleware suite with:
-1. **Rate Limiting** - Token bucket, per-IP limits, configurable windows
-2. **Request Validation** - Schema-based validation, error catching, type coercion
-3. **JWT Authentication** - Sign/verify tokens, refresh flow, secure patterns
+1. Rate limiting
+2. Request validation
+3. JWT-style auth with access and refresh tokens
 
-This is real complexity: state management, security, edge cases, integration.
+## Team
 
-## Why This Works
+- `Architect`: creates the plan
+- `Implementer`: ships the middleware modules
+- `Reviewer`: documents risks and accepted tradeoffs
+- `Tester`: executes the Jest suite
+- `Orchestrator`: writes the manifest and reviewer-facing artifacts
 
-**For Nth AI**: This is literally their core mission - agents that turn specs into working software. We built a microcosm of their platform.
+## Where Each Phase Lives
 
-**For You**: You're showing:
-- ✅ **Autonomy** - No human in the loop during iteration
-- ✅ **Self-improvement** - Agents catch and fix their own mistakes
-- ✅ **Real Output** - Actual working code, not simulations
-- ✅ **Orchestration** - Clear team structure, role clarity, handoffs
-- ✅ **Judgment** - Ambitious but realistic scope
+- Plan: [DEPLOYED_ARCHITECTURE.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/DEPLOYED_ARCHITECTURE.md)
+- Implement: [src/middleware](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/src/middleware)
+- Review: [artifacts/review_report.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/review_report.md)
+- Test: [src/__tests__](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/src/__tests__) and [artifacts/test_report.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/test_report.md)
+- Ship: [BUILD_MANIFEST.json](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/BUILD_MANIFEST.json) and [artifacts/pull_request.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/pull_request.md)
 
-## Running It
+## Why This Is The Right Scope
 
-```bash
-# Install
-npm install
-cp .env.example .env
-# Add your OpenAI API key to .env
+The worked example is big enough to show real handoffs and real testing, but small enough to run and inspect in one sitting.
 
-# Run
-npm start
+It is intentionally honest about what it does not solve yet:
 
-# Watch the agents build the middleware suite
-# Output: AGENT_LOG.md (full history), src/middleware/index.ts (code), BUILD_MANIFEST.json
-```
+- distributed rate-limit storage
+- refresh-token revocation storage
+- full JSON Schema coverage
 
-## The Output
-
-After running, you get:
-- 📝 `AGENT_LOG.md` - Complete conversation history (prompts, responses, reasoning)
-- 💻 `src/middleware/index.ts` - The actual generated code
-- 🧪 Test suite with coverage for rate limiting, validation, auth
-- 📊 `BUILD_MANIFEST.json` - What was built, iterations taken
-- 🔍 Git history showing the build process
-
-## What Makes This Impress Founders
-
-1. **Not a demo** - Real code, real testing, real decisions
-2. **Visible thinking** - Full agent log shows reasoning at each step
-3. **Iteration loops** - Shows self-correction and feedback
-4. **Complete ownership** - Agents handle the entire pipeline
-5. **Clear next steps** - Document what would compound the value
-
-## What You'd Do With More Time
-
-- Multi-feature pipelines (build 5 features in sequence, see agents improve)
-- Real test execution (agents see test results, adapt)
-- Integration failures (when features don't play well together)
-- Performance profiling phase (agents optimize based on metrics)
-- Deployment orchestration (agents recommend deployment strategy)
-- Cross-team collaboration (product agent briefs engineering team)
-- Learning/adaptation (agents get smarter as they build more)
-
-## The Pitch
-
-> "We don't have a builder — we have a **team**. Each agent owns their craft: architecture, implementation, review, testing. They communicate, they iterate, they self-correct. When an issue appears, it gets fixed before it ships. This is what scaling engineering looks like when agents do the work, not just assist with it."
-
----
-
-## Technical Depth
-
-**Agent Implementation**:
-- Uses OpenAI GPT-4 for reasoning
-- Structured JSON responses for parsing and orchestration
-- Proper context passing (each agent has access to previous work)
-- Error handling and fallback logic
-
-**Orchestration**:
-- Phase-based pipeline (clear stages)
-- Feedback loops (issues → back to implementer)
-- State management (BuildState tracks progress)
-- Logging (AGENT_LOG.md for transparency)
-
-**Why GPT-4**:
-- Better reasoning for architecture and review
-- Structured thinking for implementation
-- Can catch subtle security/logic issues
-- Better code quality output
-
----
-
-Built to show what autonomous teams can do. Not flashy. Real.
+Those are documented as review findings instead of hidden.

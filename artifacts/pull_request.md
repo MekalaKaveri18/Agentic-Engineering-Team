@@ -10,8 +10,8 @@ Implements the worked example for Express Middleware Suite with three middleware
 
 ## Verification
 
-- 7/7 tests passing
-- 56.32% line coverage
+- 8/8 tests passing
+- 86.12% line coverage
 - 590 lines of middleware code shipped
 
 ## Known tradeoffs

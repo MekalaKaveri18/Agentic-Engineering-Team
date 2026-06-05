@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-03T10:13:07.337Z",
+  "timestamp": "2026-06-05T08:31:58.901Z",
   "mode": "local-deterministic",
   "specName": "Express Middleware Suite",
   "modulesBuilt": [
@@ -36,59 +36,64 @@
     }
   ],
   "tests": {
-    "total": 7,
-    "passed": 7,
+    "total": 8,
+    "passed": 8,
     "failed": 0,
-    "durationMs": 1424,
+    "durationMs": 2795,
     "coverage": {
-      "lines": 56.32,
-      "statements": 56.50,
-      "functions": 43.33,
-      "branches": 56.55,
-      "note": "Coverage is proportional to challenge scope (3 modules). All critical paths tested."
+      "lines": 86.12,
+      "statements": 86.17,
+      "functions": 96.66,
+      "branches": 66.89
     },
     "cases": [
+      {
+        "suite": "orchestrator.test.ts",
+        "name": "EngineeringOrchestrator > writes manifest and reviewer-facing artifacts from a verified run",
+        "status": "passed",
+        "durationMs": 53
+      },
       {
         "suite": "request-validator.test.ts",
         "name": "RequestValidator > coerces primitives and applies custom validators",
         "status": "passed",
-        "durationMs": 4
+        "durationMs": 6
       },
       {
         "suite": "request-validator.test.ts",
         "name": "RequestValidator > returns structured 400 responses for invalid payloads",
         "status": "passed",
-        "durationMs": 3
+        "durationMs": 6
       },
       {
         "suite": "jwt-auth.test.ts",
         "name": "JWTAuth > issues access and refresh tokens and verifies both",
         "status": "passed",
-        "durationMs": 3
+        "durationMs": 6
       },
       {
         "suite": "jwt-auth.test.ts",
         "name": "JWTAuth > rejects expired access tokens",
         "status": "passed",
-        "durationMs": 18
+        "durationMs": 32
       },
       {
         "suite": "jwt-auth.test.ts",
         "name": "JWTAuth > attaches verified access claims in middleware",
         "status": "passed",
-        "durationMs": 2
+        "durationMs": 3
       },
       {
         "suite": "rate-limiter.test.ts",
         "name": "RateLimiter > uses a token bucket per key and refills over time",
         "status": "passed",
-        "durationMs": 2
+        "durationMs": 4
       },
       {
         "suite": "rate-limiter.test.ts",
         "name": "RateLimiter > returns 429 responses with operational headers when a client is throttled",
         "status": "passed",
-        "durationMs": 2
+        "durationMs": 4
       }
     ]
   },

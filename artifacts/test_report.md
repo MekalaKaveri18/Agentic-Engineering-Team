@@ -1,16 +1,17 @@
 # Test Report
 
-Total tests: 7
-Passed: 7
+Total tests: 8
+Passed: 8
 Failed: 0
-Duration: 1424ms
-Coverage (lines): 56.32%
-Coverage (statements): 56.5%
-Coverage (functions): 43.33%
-Coverage (branches): 56.55%
+Duration: 2795ms
+Coverage (lines): 86.12%
+Coverage (statements): 86.17%
+Coverage (functions): 96.66%
+Coverage (branches): 66.89%
 
 ## Assertions
 
+- [PASSED] orchestrator.test.ts: EngineeringOrchestrator > writes manifest and reviewer-facing artifacts from a verified run
 - [PASSED] request-validator.test.ts: RequestValidator > coerces primitives and applies custom validators
 - [PASSED] request-validator.test.ts: RequestValidator > returns structured 400 responses for invalid payloads
 - [PASSED] jwt-auth.test.ts: JWTAuth > issues access and refresh tokens and verifies both

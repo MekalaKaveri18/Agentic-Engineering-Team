@@ -62,9 +62,9 @@ Non-functional requirements
 
 **Goal:** Validate the worked example with executable tests and collect coverage.
 
-- Tests passed: 7/7
+- Tests passed: 8/8
 - Failed tests: 0
-- Coverage: 56.32% lines, 43.33% functions
+- Coverage: 86.12% lines, 96.66% functions
 
 **Handoff:** Orchestrator can write final artifacts because the worked example cleared the quality gates.
 
@@ -72,6 +72,6 @@ Non-functional requirements
 
 **Goal:** Persist the run into reviewer-friendly artifacts.
 
-- Build manifest written at 2026-06-03T10:13:07.337Z
+- Build manifest written at 2026-06-05T08:31:58.901Z
 - Artifacts directory: artifacts
 - Known tradeoffs accepted: 3

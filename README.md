@@ -1,88 +1,76 @@
-# 🤖 Agentic Engineering Team
+# Agentic Engineering Team
 
-A self-improving team of agents that autonomously ships production-ready code.
+This repo answers Nth AI Challenge 2:
 
-## The Challenge
+> Build a team of agents that takes a spec and ships code - plan, implement, review, test - with one worked example shipping a small feature autonomously.
 
-Build an agent-driven engineering team that takes a specification and ships production code with:
-- **Autonomy**: Agents make decisions, catch bugs, iterate
-- **Self-improvement**: Feedback loops, reflection, refinement
-- **Real output**: Actual working code, not simulations
-- **Clean orchestration**: Clear handoffs and communication
+The project is a scoped engineering pod with five explicit roles:
 
-## The Team
+1. Architect
+2. Implementer
+3. Reviewer
+4. Tester
+5. Orchestrator
 
-- **🏗️ Architect**: Takes spec, designs architecture, creates module plan
-- **⚙️ Implementer**: Codes each module following the design
-- **👀 Reviewer**: Reviews code for quality, security, edge cases
-- **✅ Tester**: Writes tests, validates, identifies issues
-- **🚀 Orchestrator**: Manages handoffs, feedback loops, self-correction
+The worked example is a small Express middleware package with three modules:
 
-## The First Mission
+- `RateLimiter`
+- `RequestValidator`
+- `JWTAuth`
 
-**Spec**: Build an Express middleware suite with:
-1. **Rate Limiting** - Token bucket pattern, configurable limits
-2. **Request Validation** - Schema-based validation with error catching
-3. **JWT Authentication** - Sign, verify, refresh token flow
+## What Happens
 
-**Why this spec?** It's real complexity: state management, security considerations, and integration challenges. It forces agents to collaborate, catch errors, and iterate.
+When you run `npm start`, the repo:
 
-## How It Works
+1. Builds the TypeScript project
+2. Runs the automated Jest suite
+3. Generates ship artifacts from that verified run
 
-```
-Spec Input
-    ↓
-[Architect] → Design Phase (creates arch doc)
-    ↓
-[Implementer] → Code Phase (builds modules)
-    ↓
-[Reviewer] → Review Phase (catches issues)
-    ↓
-[Tester] → Test Phase (validates + finds gaps)
-    ↓
-[Feedback Loop] → Issues found? → Back to Implementer
-    ↓
-[Shipped] → Working code + git history
-```
+No API key is required for the current submission. The goal here is a runnable, reviewable engineering workflow rather than a live model demo.
 
-## What Makes This Impressive
+## How The Agent Team Maps To The Repo
 
-✅ **Real autonomy**: No human in the loop during iteration
-✅ **Self-correction**: Agents catch and fix their own mistakes
-✅ **Visible iteration**: Git history shows the thinking
-✅ **Production-ready**: Code actually works, has tests
-✅ **Clear communication**: Each handoff is documented
-✅ **Judgment**: Realistic scoping, not trying to do everything at once
+- `Plan`: [DEPLOYED_ARCHITECTURE.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/DEPLOYED_ARCHITECTURE.md)
+- `Implement`: [src/middleware](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/src/middleware)
+- `Review`: [artifacts/review_report.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/review_report.md)
+- `Test`: [src/__tests__](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/src/__tests__) and [artifacts/test_report.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/test_report.md)
+- `Ship`: [BUILD_MANIFEST.json](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/BUILD_MANIFEST.json) and [artifacts/pull_request.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/pull_request.md)
 
-## Running It
+## Run It
 
 ```bash
-# Setup
 npm install
-cp .env.example .env
-# Add your OpenAI API key to .env
+npm start
+```
 
-# Run the orchestrator
+Useful commands:
+
+```bash
+npm run build
+npm test
 npm run dev
-
-# Watch agents build the middleware suite
 ```
 
 ## Output
 
-After running, you'll have:
-- 📁 `/src/middleware/` - Production middleware code
-- 📁 `/tests/` - Comprehensive test suite
-- 📜 `/AGENT_LOG.md` - Full conversation history
-- 🏗️ `/ARCHITECTURE.md` - Design decisions
-- 📊 Git history showing iteration
+After a successful run you will have:
 
-## The Real Win
+- [AGENT_LOG.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/AGENT_LOG.md): agent-by-agent handoffs
+- [BUILD_MANIFEST.json](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/BUILD_MANIFEST.json): machine-readable ship record
+- [DEPLOYED_ARCHITECTURE.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/DEPLOYED_ARCHITECTURE.md): planning artifact
+- [artifacts](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts): review, test, and pull request summaries
 
-This isn't about flashy AI — it's about **work compounding**. Each agent makes the next agent's job better. Reviewers find bugs. Testers validate. Implementers refine. It's a real team.
+## Worked Example Scope
 
-That's what Nth AI is looking for.
+The feature is intentionally small and honest:
 
----
+- Rate limiting uses an in-memory token bucket
+- Validation uses a focused schema DSL with coercion and custom rules
+- Auth uses signed access and refresh tokens with route middleware
 
-Built to showcase autonomous team orchestration and self-improving agent systems.
+Known tradeoffs are captured in the review report instead of being hidden.
+
+## Start Here
+
+- [SUBMISSION.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/SUBMISSION.md)
+- [QUICKSTART.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/QUICKSTART.md)
