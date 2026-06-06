@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { ReviewerAgent } from "./agents/reviewer";
 import { WORKED_EXAMPLE_SPEC, WORKED_EXAMPLE_SPEC_TEXT } from "./spec";
 import {
   AgentLogEntry,
@@ -7,7 +8,7 @@ import {
   BuildManifest,
   CoverageSummary,
   ImplementationReport,
-  ReviewFinding,
+  ReviewReport,
   TestCaseResult,
   TestSummary,
 } from "./types";
@@ -47,28 +48,30 @@ interface CoverageSummaryFile {
 export class EngineeringOrchestrator {
   private readonly repoRoot: string;
   private readonly artifactsDir: string;
+  private readonly reviewerAgent: ReviewerAgent;
 
   constructor(repoRoot = process.cwd()) {
     this.repoRoot = repoRoot;
     this.artifactsDir = path.join(this.repoRoot, "artifacts");
+    this.reviewerAgent = new ReviewerAgent(this.repoRoot);
   }
 
   run(): BuildManifest {
     const architecture = this.architectPhase();
     const implementation = this.implementationPhase(architecture);
-    const reviewFindings = this.reviewPhase();
+    const reviewReport = this.reviewPhase(architecture);
     const testSummary = this.testingPhase();
     const manifest = this.shipPhase(
       architecture,
       implementation,
-      reviewFindings,
+      reviewReport,
       testSummary
     );
 
     this.writeAgentLog(
       architecture,
       implementation,
-      reviewFindings,
+      reviewReport,
       testSummary,
       manifest
     );
@@ -83,7 +86,7 @@ export class EngineeringOrchestrator {
       workflow: [
         "Architect translates the spec into module boundaries and quality gates.",
         "Implementer ships one focused middleware package with explicit tradeoffs.",
-        "Reviewer flags operational risks and confirms there are no high-severity blockers.",
+        "Reviewer runs independent static analysis over the shipped files and flags operational risks before ship.",
         "Tester validates the feature through executable Jest suites and coverage output.",
       ],
       modules: [
@@ -149,36 +152,8 @@ export class EngineeringOrchestrator {
     };
   }
 
-  private reviewPhase(): ReviewFinding[] {
-    return [
-      {
-        severity: "medium",
-        title: "Rate limiter storage is single-node only",
-        detail:
-          "Token buckets live in process memory, which is correct for the worked example but would not coordinate across multiple app instances.",
-        recommendation:
-          "Swap the in-memory map for a shared store interface backed by Redis before production deployment.",
-        status: "accepted",
-      },
-      {
-        severity: "medium",
-        title: "Refresh-token revocation is not persisted",
-        detail:
-          "The auth flow supports refresh tokens, but it remains stateless and therefore cannot revoke individual refresh sessions.",
-        recommendation:
-          "Introduce a session or token registry if the package moves beyond the current scoped challenge environment.",
-        status: "accepted",
-      },
-      {
-        severity: "low",
-        title: "Validation DSL is intentionally narrower than full JSON Schema",
-        detail:
-          "The validator covers the worked example requirements but does not attempt to implement every JSON Schema feature.",
-        recommendation:
-          "Expand the schema engine or plug in AJV if future specs require nested structures or advanced schema composition.",
-        status: "accepted",
-      },
-    ];
+  private reviewPhase(architecture: ArchitecturePlan): ReviewReport {
+    return this.reviewerAgent.review(architecture);
   }
 
   private testingPhase(): TestSummary {
@@ -251,10 +226,10 @@ export class EngineeringOrchestrator {
   private shipPhase(
     architecture: ArchitecturePlan,
     implementation: ImplementationReport,
-    reviewFindings: ReviewFinding[],
+    reviewReport: ReviewReport,
     testSummary: TestSummary
   ): BuildManifest {
-    const unresolvedHighSeverityFindings = reviewFindings.filter(
+    const unresolvedHighSeverityFindings = reviewReport.findings.filter(
       (finding) => finding.severity === "high" && finding.status !== "resolved"
     );
 
@@ -272,7 +247,7 @@ export class EngineeringOrchestrator {
       specName: architecture.systemName,
       modulesBuilt: architecture.modules.map((modulePlan) => modulePlan.name),
       filesShipped: implementation.shippedFiles,
-      reviewFindings,
+      reviewFindings: reviewReport.findings,
       tests: testSummary,
       lineCount: implementation.lineCount,
     };
@@ -287,7 +262,7 @@ export class EngineeringOrchestrator {
     );
     fs.writeFileSync(
       path.join(this.artifactsDir, "review_report.md"),
-      this.renderReviewMarkdown(reviewFindings)
+      this.renderReviewMarkdown(reviewReport)
     );
     fs.writeFileSync(
       path.join(this.artifactsDir, "test_report.md"),
@@ -304,7 +279,7 @@ export class EngineeringOrchestrator {
   private writeAgentLog(
     architecture: ArchitecturePlan,
     implementation: ImplementationReport,
-    reviewFindings: ReviewFinding[],
+    reviewReport: ReviewReport,
     testSummary: TestSummary,
     manifest: BuildManifest
   ): void {
@@ -329,15 +304,19 @@ export class EngineeringOrchestrator {
           ...implementation.designNotes,
         ],
         handoff:
-          "Reviewer should confirm there are no high-severity blockers and capture any known operational gaps.",
+          "Reviewer should analyze the shipped files independently and capture any known operational gaps.",
       },
       {
         agent: "Reviewer",
-        goal: "Find operational risks and prevent dishonest shipping criteria.",
-        highlights: reviewFindings.map(
+        goal: "Analyze the shipped files independently and prevent dishonest shipping criteria.",
+        highlights: [
+          reviewReport.summary,
+          ...reviewReport.methodology,
+          ...reviewReport.findings.map(
           (finding) =>
             `[${finding.severity.toUpperCase()}] ${finding.title}: ${finding.detail}`
-        ),
+          ),
+        ],
         handoff:
           "Tester can ship once the executable suite passes and only accepted tradeoffs remain.",
       },
@@ -360,7 +339,7 @@ export class EngineeringOrchestrator {
         highlights: [
           `Build manifest written at ${manifest.timestamp}`,
           `Artifacts directory: ${path.relative(this.repoRoot, this.artifactsDir)}`,
-          `Known tradeoffs accepted: ${reviewFindings.length}`,
+          `Known tradeoffs accepted: ${reviewReport.findings.length}`,
         ],
       },
     ];
@@ -435,21 +414,31 @@ export class EngineeringOrchestrator {
     ].join("\n");
   }
 
-  private renderReviewMarkdown(reviewFindings: ReviewFinding[]): string {
+  private renderReviewMarkdown(reviewReport: ReviewReport): string {
     return [
       "# Review Report",
       "",
-      "The reviewer blocked fake completeness and accepted only scoped tradeoffs that are visible to the operator.",
+      reviewReport.summary,
       "",
-      ...reviewFindings.flatMap((finding) => [
+      "## Methodology",
+      "",
+      ...reviewReport.methodology.map((step) => `- ${step}`),
+      "",
+      "## Findings",
+      "",
+      ...reviewReport.findings.flatMap((finding) => [
         `## ${finding.title}`,
         "",
         `Severity: ${finding.severity}`,
         "",
         `Status: ${finding.status}`,
         "",
+        ...(finding.file ? [`File: ${finding.file}`, ""] : []),
         finding.detail,
         "",
+        ...(finding.evidence && finding.evidence.length > 0
+          ? ["Evidence:", ...finding.evidence.map((line) => `- ${line}`), ""]
+          : []),
         `Recommendation: ${finding.recommendation}`,
         "",
       ]),

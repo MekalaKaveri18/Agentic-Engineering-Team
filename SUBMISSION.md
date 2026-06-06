@@ -21,7 +21,7 @@ The team is explicit in the repo rather than implied:
    Output: [src/middleware](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/src/middleware)
 
 3. `Reviewer`
-   Surfaces risks and accepted tradeoffs before ship.
+   Runs independent static analysis over the shipped files and surfaces risks before ship.
    Output: [artifacts/review_report.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/artifacts/review_report.md)
 
 4. `Tester`
@@ -78,8 +78,6 @@ Current known tradeoffs:
 - Rate limiting is single-node because it uses in-memory buckets
 - Refresh-token revocation is not persisted
 - The schema engine is focused, not full JSON Schema
-
-One other honest limitation is that the review findings in this worked example are deterministic rather than produced by a separate review agent running independent analysis. The findings themselves are real and accurate for the shipped feature, and the production next step would be to split review into its own static-analysis or model-backed agent with independent judgment.
 
 Those tradeoffs are documented in the shipped review artifact instead of being glossed over.
 

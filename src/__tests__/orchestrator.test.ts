@@ -19,15 +19,37 @@ describe("EngineeringOrchestrator", () => {
       fs.mkdirSync(middlewareDir, { recursive: true });
       fs.writeFileSync(
         path.join(middlewareDir, "rate-limiter.ts"),
-        "export const rateLimiter = true;\n"
+        [
+          "interface BucketState { tokens: number; }",
+          "export class RateLimiter {",
+          "  private readonly buckets = new Map<string, BucketState>();",
+          "  remember(key: string, value: BucketState) {",
+          "    this.buckets.set(key, value);",
+          "  }",
+          "}",
+        ].join("\n")
       );
       fs.writeFileSync(
         path.join(middlewareDir, "request-validator.ts"),
-        "export const requestValidator = true;\n"
+        [
+          "interface FieldRule { type: 'string'; }",
+          "export interface ValidationSchema {",
+          "  fields: Record<string, FieldRule>;",
+          "}",
+        ].join("\n")
       );
       fs.writeFileSync(
         path.join(middlewareDir, "jwt-auth.ts"),
-        "export const jwtAuth = true;\n"
+        [
+          "export class JWTAuth {",
+          "  verifyRefreshToken(token: string) { return token; }",
+          "  issueTokens() { return true; }",
+          "  refreshTokens(refreshToken: string) {",
+          "    this.verifyRefreshToken(refreshToken);",
+          "    return this.issueTokens();",
+          "  }",
+          "}",
+        ].join("\n")
       );
 
       writeJson(path.join(tempRoot, "jest-results.json"), {
@@ -78,6 +100,13 @@ describe("EngineeringOrchestrator", () => {
       expect(manifest.tests.total).toBe(2);
       expect(manifest.tests.coverage?.lines).toBe(80);
       expect(manifest.lineCount).toBeGreaterThan(0);
+      expect(manifest.reviewFindings.map((finding) => finding.title)).toEqual(
+        expect.arrayContaining([
+          "Rate limiter storage is single-node only",
+          "Refresh-token revocation is not persisted",
+          "Validation DSL is intentionally narrower than full JSON Schema",
+        ])
+      );
 
       expect(
         fs.existsSync(path.join(tempRoot, "AGENT_LOG.md"))

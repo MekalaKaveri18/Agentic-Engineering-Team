@@ -48,6 +48,15 @@ export interface ReviewFinding {
   detail: string;
   recommendation: string;
   status: FindingStatus;
+  file?: string;
+  evidence?: string[];
+}
+
+export interface ReviewReport {
+  reviewer: "static-analysis-reviewer";
+  summary: string;
+  methodology: string[];
+  findings: ReviewFinding[];
 }
 
 export interface CoverageSummary {
