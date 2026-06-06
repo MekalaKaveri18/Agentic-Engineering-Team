@@ -31,7 +31,7 @@ Non-functional requirements
 - Modules: RateLimiter, RequestValidator, JWTAuth
 - Architect translates the spec into module boundaries and quality gates.
 - Implementer ships one focused middleware package with explicit tradeoffs.
-- Reviewer flags operational risks and confirms there are no high-severity blockers.
+- Reviewer runs independent static analysis over the shipped files and flags operational risks before ship.
 - Tester validates the feature through executable Jest suites and coverage output.
 
 **Handoff:** Implementation should stay dependency-light and ship explicit tradeoffs instead of pretending to be broader than it is.
@@ -46,15 +46,19 @@ Non-functional requirements
 - Split each middleware concern into its own module to make review and testing explicit.
 - Kept the public API small enough for a reviewer to understand in one pass.
 
-**Handoff:** Reviewer should confirm there are no high-severity blockers and capture any known operational gaps.
+**Handoff:** Reviewer should analyze the shipped files independently and capture any known operational gaps.
 
 ## Reviewer
 
-**Goal:** Find operational risks and prevent dishonest shipping criteria.
+**Goal:** Analyze the shipped files independently and prevent dishonest shipping criteria.
 
-- [MEDIUM] Rate limiter storage is single-node only: Token buckets live in process memory, which is correct for the worked example but would not coordinate across multiple app instances.
-- [MEDIUM] Refresh-token revocation is not persisted: The auth flow supports refresh tokens, but it remains stateless and therefore cannot revoke individual refresh sessions.
-- [LOW] Validation DSL is intentionally narrower than full JSON Schema: The validator covers the worked example requirements but does not attempt to implement every JSON Schema feature.
+- Reviewer analyzed 3 shipped files and flagged 3 scoped findings from the code itself.
+- Reads the shipped source files directly instead of relying on orchestrator-owned constants.
+- Matches findings to concrete source signals so the review changes when the implementation changes.
+- Focuses on operational and scope tradeoffs that matter for this worked example.
+- [MEDIUM] Rate limiter storage is single-node only: Reviewer found request budgets stored in process memory, so multiple application instances would not share rate-limit state.
+- [LOW] Validation DSL is intentionally narrower than full JSON Schema: Reviewer found a focused field-rule DSL rather than a full schema engine, which keeps the worked example readable but narrows the shape of supported schemas.
+- [MEDIUM] Refresh-token revocation is not persisted: Reviewer found a refresh flow but no session registry or token revocation layer, so individual refresh sessions cannot be invalidated once issued.
 
 **Handoff:** Tester can ship once the executable suite passes and only accepted tradeoffs remain.
 
@@ -62,9 +66,9 @@ Non-functional requirements
 
 **Goal:** Validate the worked example with executable tests and collect coverage.
 
-- Tests passed: 8/8
+- Tests passed: 9/9
 - Failed tests: 0
-- Coverage: 86.12% lines, 96.66% functions
+- Coverage: 86.34% lines, 97.29% functions
 
 **Handoff:** Orchestrator can write final artifacts because the worked example cleared the quality gates.
 
@@ -72,6 +76,6 @@ Non-functional requirements
 
 **Goal:** Persist the run into reviewer-friendly artifacts.
 
-- Build manifest written at 2026-06-05T09:18:53.363Z
+- Build manifest written at 2026-06-05T09:59:28.901Z
 - Artifacts directory: artifacts
 - Known tradeoffs accepted: 3

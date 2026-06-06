@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-05T09:18:53.363Z",
+  "timestamp": "2026-06-05T09:59:28.901Z",
   "mode": "local-deterministic",
   "specName": "Express Middleware Suite",
   "modulesBuilt": [
@@ -16,42 +16,82 @@
     {
       "severity": "medium",
       "title": "Rate limiter storage is single-node only",
-      "detail": "Token buckets live in process memory, which is correct for the worked example but would not coordinate across multiple app instances.",
-      "recommendation": "Swap the in-memory map for a shared store interface backed by Redis before production deployment.",
-      "status": "accepted"
-    },
-    {
-      "severity": "medium",
-      "title": "Refresh-token revocation is not persisted",
-      "detail": "The auth flow supports refresh tokens, but it remains stateless and therefore cannot revoke individual refresh sessions.",
-      "recommendation": "Introduce a session or token registry if the package moves beyond the current scoped challenge environment.",
-      "status": "accepted"
+      "detail": "Reviewer found request budgets stored in process memory, so multiple application instances would not share rate-limit state.",
+      "recommendation": "Introduce a storage adapter so the middleware can swap from local memory to Redis or another shared store before production deployment.",
+      "status": "accepted",
+      "file": "src/middleware/rate-limiter.ts",
+      "evidence": [
+        "L27: private readonly buckets = new Map<string, BucketState>();",
+        "L72: this.buckets.set(key, updated);"
+      ]
     },
     {
       "severity": "low",
       "title": "Validation DSL is intentionally narrower than full JSON Schema",
-      "detail": "The validator covers the worked example requirements but does not attempt to implement every JSON Schema feature.",
-      "recommendation": "Expand the schema engine or plug in AJV if future specs require nested structures or advanced schema composition.",
-      "status": "accepted"
+      "detail": "Reviewer found a focused field-rule DSL rather than a full schema engine, which keeps the worked example readable but narrows the shape of supported schemas.",
+      "recommendation": "Expand the validator or plug in a full schema engine if future specs need nested schemas or broader composition features.",
+      "status": "accepted",
+      "file": "src/middleware/request-validator.ts",
+      "evidence": [
+        "L22: export interface ValidationSchema {",
+        "L23: fields: Record<string, FieldRule>;"
+      ]
+    },
+    {
+      "severity": "medium",
+      "title": "Refresh-token revocation is not persisted",
+      "detail": "Reviewer found a refresh flow but no session registry or token revocation layer, so individual refresh sessions cannot be invalidated once issued.",
+      "recommendation": "Add a persistent session or token registry if the auth module moves beyond the current scoped challenge environment.",
+      "status": "accepted",
+      "file": "src/middleware/jwt-auth.ts",
+      "evidence": [
+        "L119: refreshTokens(refreshToken: string): TokenPair {",
+        "L115: verifyRefreshToken(token: string): VerifiedToken {",
+        "L121: return this.issueTokens(stripReservedClaims(claims));"
+      ]
     }
   ],
   "tests": {
-    "total": 8,
-    "passed": 8,
+    "total": 9,
+    "passed": 9,
     "failed": 0,
-    "durationMs": 1740,
+    "durationMs": 1708,
     "coverage": {
-      "lines": 86.12,
-      "statements": 86.17,
-      "functions": 96.66,
-      "branches": 66.89
+      "lines": 86.34,
+      "statements": 86.53,
+      "functions": 97.29,
+      "branches": 66.47
     },
     "cases": [
+      {
+        "suite": "reviewer-agent.test.ts",
+        "name": "ReviewerAgent > produces findings from shipped source code instead of orchestrator constants",
+        "status": "passed",
+        "durationMs": 13
+      },
       {
         "suite": "orchestrator.test.ts",
         "name": "EngineeringOrchestrator > writes manifest and reviewer-facing artifacts from a verified run",
         "status": "passed",
-        "durationMs": 27
+        "durationMs": 24
+      },
+      {
+        "suite": "jwt-auth.test.ts",
+        "name": "JWTAuth > issues access and refresh tokens and verifies both",
+        "status": "passed",
+        "durationMs": 22
+      },
+      {
+        "suite": "jwt-auth.test.ts",
+        "name": "JWTAuth > rejects expired access tokens",
+        "status": "passed",
+        "durationMs": 34
+      },
+      {
+        "suite": "jwt-auth.test.ts",
+        "name": "JWTAuth > attaches verified access claims in middleware",
+        "status": "passed",
+        "durationMs": 3
       },
       {
         "suite": "request-validator.test.ts",
@@ -63,7 +103,7 @@
         "suite": "request-validator.test.ts",
         "name": "RequestValidator > returns structured 400 responses for invalid payloads",
         "status": "passed",
-        "durationMs": 3
+        "durationMs": 1
       },
       {
         "suite": "rate-limiter.test.ts",
@@ -76,24 +116,6 @@
         "name": "RateLimiter > returns 429 responses with operational headers when a client is throttled",
         "status": "passed",
         "durationMs": 2
-      },
-      {
-        "suite": "jwt-auth.test.ts",
-        "name": "JWTAuth > issues access and refresh tokens and verifies both",
-        "status": "passed",
-        "durationMs": 10
-      },
-      {
-        "suite": "jwt-auth.test.ts",
-        "name": "JWTAuth > rejects expired access tokens",
-        "status": "passed",
-        "durationMs": 28
-      },
-      {
-        "suite": "jwt-auth.test.ts",
-        "name": "JWTAuth > attaches verified access claims in middleware",
-        "status": "passed",
-        "durationMs": 1
       }
     ]
   },

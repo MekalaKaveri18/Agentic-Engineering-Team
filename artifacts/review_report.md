@@ -1,6 +1,14 @@
 # Review Report
 
-The reviewer blocked fake completeness and accepted only scoped tradeoffs that are visible to the operator.
+Reviewer analyzed 3 shipped files and flagged 3 scoped findings from the code itself.
+
+## Methodology
+
+- Reads the shipped source files directly instead of relying on orchestrator-owned constants.
+- Matches findings to concrete source signals so the review changes when the implementation changes.
+- Focuses on operational and scope tradeoffs that matter for this worked example.
+
+## Findings
 
 ## Rate limiter storage is single-node only
 
@@ -8,19 +16,15 @@ Severity: medium
 
 Status: accepted
 
-Token buckets live in process memory, which is correct for the worked example but would not coordinate across multiple app instances.
+File: src/middleware/rate-limiter.ts
 
-Recommendation: Swap the in-memory map for a shared store interface backed by Redis before production deployment.
+Reviewer found request budgets stored in process memory, so multiple application instances would not share rate-limit state.
 
-## Refresh-token revocation is not persisted
+Evidence:
+- L27: private readonly buckets = new Map<string, BucketState>();
+- L72: this.buckets.set(key, updated);
 
-Severity: medium
-
-Status: accepted
-
-The auth flow supports refresh tokens, but it remains stateless and therefore cannot revoke individual refresh sessions.
-
-Recommendation: Introduce a session or token registry if the package moves beyond the current scoped challenge environment.
+Recommendation: Introduce a storage adapter so the middleware can swap from local memory to Redis or another shared store before production deployment.
 
 ## Validation DSL is intentionally narrower than full JSON Schema
 
@@ -28,6 +32,29 @@ Severity: low
 
 Status: accepted
 
-The validator covers the worked example requirements but does not attempt to implement every JSON Schema feature.
+File: src/middleware/request-validator.ts
 
-Recommendation: Expand the schema engine or plug in AJV if future specs require nested structures or advanced schema composition.
+Reviewer found a focused field-rule DSL rather than a full schema engine, which keeps the worked example readable but narrows the shape of supported schemas.
+
+Evidence:
+- L22: export interface ValidationSchema {
+- L23: fields: Record<string, FieldRule>;
+
+Recommendation: Expand the validator or plug in a full schema engine if future specs need nested schemas or broader composition features.
+
+## Refresh-token revocation is not persisted
+
+Severity: medium
+
+Status: accepted
+
+File: src/middleware/jwt-auth.ts
+
+Reviewer found a refresh flow but no session registry or token revocation layer, so individual refresh sessions cannot be invalidated once issued.
+
+Evidence:
+- L119: refreshTokens(refreshToken: string): TokenPair {
+- L115: verifyRefreshToken(token: string): VerifiedToken {
+- L121: return this.issueTokens(stripReservedClaims(claims));
+
+Recommendation: Add a persistent session or token registry if the auth module moves beyond the current scoped challenge environment.

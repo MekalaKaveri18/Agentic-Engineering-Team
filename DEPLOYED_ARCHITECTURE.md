@@ -6,7 +6,7 @@ A scoped engineering pod that turns one backend spec into a real middleware pack
 
 1. Architect translates the spec into module boundaries and quality gates.
 2. Implementer ships one focused middleware package with explicit tradeoffs.
-3. Reviewer flags operational risks and confirms there are no high-severity blockers.
+3. Reviewer runs independent static analysis over the shipped files and flags operational risks before ship.
 4. Tester validates the feature through executable Jest suites and coverage output.
 
 ## Modules
