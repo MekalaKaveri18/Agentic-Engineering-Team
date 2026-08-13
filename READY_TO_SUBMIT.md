@@ -2,7 +2,7 @@
 
 ## What To Send
 
-Use this repo for Challenge 2 and point the reviewer to:
+
 
 1. [SUBMISSION.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/SUBMISSION.md)
 2. [AGENT_LOG.md](/c:/Users/HP/Downloads/NthAI/agentic-engineering-team/AGENT_LOG.md)
