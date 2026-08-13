@@ -1,6 +1,6 @@
-# Challenge 2 Submission
 
-I picked Challenge 2 and built a small agentic engineering team that takes one fixed spec and ships one worked example through planning, implementation, review, and test.
+
+I built a small agentic engineering team that takes one fixed spec and ships one worked example through planning, implementation, review, and test.
 
 The worked example is an Express middleware package with three modules:
 
