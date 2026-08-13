@@ -12,7 +12,7 @@
 ## Suggested Email
 
 ```text
-Challenge selected: #2
+
 
 Built a small agentic engineering team that takes one spec and ships one worked example through planning, implementation, review, and test.
 
