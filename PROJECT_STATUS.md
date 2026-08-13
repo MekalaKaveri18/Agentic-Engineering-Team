@@ -2,7 +2,7 @@
 
 ## Current State
 
-The repo is in a good state for Challenge 2 after the repair pass:
+The repo is in a good state after the repair pass:
 
 - `npm run build` passes
 - `npm test` passes
