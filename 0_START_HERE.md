@@ -4,7 +4,7 @@ If you only open one file first, open [SUBMISSION.md](/c:/Users/HP/Downloads/Nth
 
 ## The Short Version
 
-This repo is a Challenge 2 submission: a small team of agents that takes one spec and ships one feature through planning, implementation, review, and test.
+This repo is: a small team of agents that takes one spec and ships one feature through planning, implementation, review, and test.
 
 The worked example is an Express middleware package with:
 
